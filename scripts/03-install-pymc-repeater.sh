@@ -65,8 +65,8 @@ echo "# Enable GPIOd to prevent errors on first start"
 sed -i "/^  cs_pin:.*/a\\  gpio_chip: 1" "$PYMC_CONFIG_FILE"
 sed -i "/^  gpio_chip:.*/a\\  use_gpiod_backend: true" "$PYMC_CONFIG_FILE"
 
-echo "# Copy in our BoardConfig so that you only get the options of our two variants"
-cp $SCRIPT_DIR/assets/ultrapeater-radio-settings.json $PYMC_SERVICE_USER_HOME/radio-settings.json
+echo "# Leaving radio-settings.json under pyMC_Repeater control"
+echo "  No local board config override will be installed."
 
 echo "# Copy in our custom OTA update script"
 cp $SCRIPT_DIR/assets/pymc-do-upgrade /usr/local/bin/pymc-do-upgrade

@@ -5,6 +5,16 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+CURRENT_MODEL="$(tr -d '\0' </proc/device-tree/model)"
+case "$CURRENT_MODEL" in
+    "Luckfox Pico Ultra W"|"Luckfox Pico Pi A W"|"Luckfox Pico Pi B W")
+        HAS_WIFI_BT=1
+        ;;
+    *)
+        HAS_WIFI_BT=0
+        ;;
+esac
+
 echo "Disable root user password"
 passwd -l root
 
@@ -29,8 +39,12 @@ elif [ "$1" == "uart_enable" ]; then\
     luckfox_uart_app 1 $2 $3\
 ' /usr/bin/luckfox-config
 
-echo "Disabling RGB"
-luckfox-config rgb_disable
+if [[ "$CURRENT_MODEL" == "Luckfox Pico Ultra"* ]]; then
+    echo "Disabling RGB"
+    luckfox-config rgb_disable
+else
+    echo "Skipping RGB disable for $CURRENT_MODEL"
+fi
 
 echo "Increase the size of the tmpfs"
 mount -o remount,size=32M /run
@@ -74,6 +88,7 @@ MACAddress=$mac
 DHCP=yes
 [DHCPv4]
 ClientIdentifier=mac
+RouteMetric=10
 EOF
 
 echo "Configure systemd-networkd to take effect on next boot"
@@ -157,7 +172,7 @@ echo "Disable the rgb switcher starting in rc.local"
 sed -i 's/\/usr\/bin\/luckfox_switch_rgb_resolution/#\/usr\/bin\/luckfox_switch_rgb_resolution/' /etc/rc.local
 
 
-if [ "$(cat /proc/device-tree/model)" != "Luckfox Pico Ultra W" ]; then
+if [ "$HAS_WIFI_BT" -ne 1 ]; then
     echo "Disable the wifi/bt script - we won't be using them"
     sed -i 's/wifibt_init/#wifibt_init/' /etc/rc.local
 fi

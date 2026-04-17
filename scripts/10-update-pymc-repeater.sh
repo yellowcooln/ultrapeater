@@ -56,7 +56,6 @@ cp "$PYMC_SCRIPT_DIR/pyproject.toml" "$PYMC_INSTALL_DIR/"
 cp "$PYMC_SCRIPT_DIR/README.md" "$PYMC_INSTALL_DIR/"
 cp "$PYMC_SCRIPT_DIR/manage.sh" "$PYMC_INSTALL_DIR/" 2>/dev/null || true
 cp "$PYMC_SCRIPT_DIR/pymc-repeater.service" "$PYMC_INSTALL_DIR/" 2>/dev/null || true
-cp "$PYMC_SCRIPT_DIR/radio-settings.json" $PYMC_SERVICE_USER_HOME/ 2>/dev/null || true
 cp "$PYMC_SCRIPT_DIR/radio-presets.json" $PYMC_SERVICE_USER_HOME/ 2>/dev/null || truezx
 
 echo "# Setting permissions..."
