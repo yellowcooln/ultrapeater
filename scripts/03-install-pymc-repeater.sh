@@ -84,8 +84,9 @@ chown -R "$PYMC_SERVICE_USER:$PYMC_SERVICE_USER" $PYMC_SERVICE_USER_HOME/.config
 echo "# Installing dependencies and pyMC_Repeater"
 
 cd "$PYMC_SCRIPT_DIR"
-# Suppress pip root user warnings
-export PIP_ROOT_USER_ACTION=ignore
+echo "# Creating Python virtual environment..."
+python3 -m venv "$PYMC_INSTALL_DIR/venv"
+
 # Calculate version from git for setuptools_scm
 if [ -d .git ]; then
     git fetch --tags 2>/dev/null || true
@@ -96,7 +97,8 @@ else
     export SETUPTOOLS_SCM_PRETEND_VERSION="1.0.5"
 fi
 
-python3 -m pip install --break-system-packages --force-reinstall --no-cache-dir .
+"$PYMC_INSTALL_DIR/venv/bin/pip" install --upgrade pip setuptools wheel
+"$PYMC_INSTALL_DIR/venv/bin/pip" install --force-reinstall --no-cache-dir .
 
 echo "# Installing systemd service..."
 cp "$PYMC_SCRIPT_DIR/pymc-repeater.service" /etc/systemd/system/
